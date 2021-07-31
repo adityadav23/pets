@@ -15,7 +15,10 @@
  */
 package com.example.android.pets;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import com.example.android.pets.data.PetContract.PetEntry;
 import androidx.core.app.NavUtils;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -26,6 +29,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.example.android.pets.data.PetContract;
+import com.example.android.pets.data.PetDbHelper;
 
 /**
  * Allows user to create a new pet or edit an existing one.
@@ -48,7 +55,8 @@ public class EditorActivity extends AppCompatActivity {
      * Gender of the pet. The possible values are:
      * 0 for unknown gender, 1 for male, 2 for female.
      */
-    private int mGender = 0;
+    private int mGender = PetEntry.GENDER_UNKNOWN;
+     private PetDbHelper mPetDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +64,13 @@ public class EditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_editor);
 
         // Find all relevant views that we will need to read user input from
-        mNameEditText = (EditText) findViewById(R.id.edit_pet_name);
-        mBreedEditText = (EditText) findViewById(R.id.edit_pet_breed);
-        mWeightEditText = (EditText) findViewById(R.id.edit_pet_weight);
-        mGenderSpinner = (Spinner) findViewById(R.id.spinner_gender);
+        mNameEditText =  findViewById(R.id.edit_pet_name);
+        mBreedEditText =  findViewById(R.id.edit_pet_breed);
+        mWeightEditText = findViewById(R.id.edit_pet_weight);
+        mGenderSpinner =  findViewById(R.id.spinner_gender);
 
         setupSpinner();
+     //   mPetDbHelper = new PetDbHelper(this);
     }
 
     /**
@@ -112,19 +121,54 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    private void InsertPet(){
+
+        String nameString = mNameEditText.getText().toString().trim();
+        String breedString = mBreedEditText.getText().toString().trim();
+
+        int weightInt = Integer.parseInt(mWeightEditText.getText().toString().trim());
+
+        PetDbHelper mPetDbHelper = new PetDbHelper(this);
+
+        SQLiteDatabase db  = mPetDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(PetContract.PetEntry.COLUMN_PET_NAME, nameString);
+        values.put(PetContract.PetEntry.COLUMN_PET_BREED, breedString);
+        values.put(PetContract.PetEntry.COLUMN_PET_GENDER, mGender);
+        values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, weightInt);
+
+        long newRowId =  db.insert(PetEntry.TABLE_NAME , null , values);
+
+        if(newRowId == -1){
+            Toast.makeText(this, "Error with saving pet", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "data saved with rowid  :" + newRowId , Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // User clicked on a menu option in the app bar overflow menu
-        switch (item.getItemId()) {
+        if(item.getItemId() == R.id.action_save) {
             // Respond to a click on the "Save" menu option
-            case R.id.action_save:
-                // Do nothing for now
-                return true;
+
+                InsertPet();
+                finish();
+                return true;}
             // Respond to a click on the "Delete" menu option
-            case R.id.action_delete:
+           else if(item.getItemId()== R.id.action_delete){
                 // Do nothing for now
                 return true;
+           }
             // Respond to a click on the "Up" arrow button in the app bar
-            case android.R.id.home:
+            else if(item.getItemId()==android.R.id.home){
                 // Navigate back to parent activity (CatalogActivity)
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
