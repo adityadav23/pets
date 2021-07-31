@@ -56,7 +56,7 @@ public class EditorActivity extends AppCompatActivity {
      * 0 for unknown gender, 1 for male, 2 for female.
      */
     private int mGender = PetEntry.GENDER_UNKNOWN;
-     private PetDbHelper mPetDbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,11 +95,11 @@ public class EditorActivity extends AppCompatActivity {
                 String selection = (String) parent.getItemAtPosition(position);
                 if (!TextUtils.isEmpty(selection)) {
                     if (selection.equals(getString(R.string.gender_male))) {
-                        mGender = 1; // Male
+                        mGender = PetEntry.GENDER_MALE;
                     } else if (selection.equals(getString(R.string.gender_female))) {
-                        mGender = 2; // Female
+                        mGender = PetEntry.GENDER_FEMALE;
                     } else {
-                        mGender = 0; // Unknown
+                        mGender = PetEntry.GENDER_UNKNOWN;
                     }
                 }
             }
@@ -107,22 +107,9 @@ public class EditorActivity extends AppCompatActivity {
             // Because AdapterView is an abstract class, onNothingSelected must be defined
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                mGender = 0; // Unknown
+            mGender = PetEntry.GENDER_UNKNOWN; // Unknown
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu options from the res/menu/menu_editor.xml file.
-        // This adds menu items to the app bar.
-        getMenuInflater().inflate(R.menu.menu_editor, menu);
-        return true;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     private void InsertPet(){
@@ -152,6 +139,14 @@ public class EditorActivity extends AppCompatActivity {
             Toast.makeText(this, "data saved with rowid  :" + newRowId , Toast.LENGTH_SHORT).show();
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu options from the res/menu/menu_editor.xml file.
+        // This adds menu items to the app bar.
+        getMenuInflater().inflate(R.menu.menu_editor, menu);
+        return true;
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

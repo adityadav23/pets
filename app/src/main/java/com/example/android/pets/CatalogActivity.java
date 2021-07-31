@@ -140,10 +140,6 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void insertPet(){
 
-
-
-
-
         SQLiteDatabase db  = mPetDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -153,7 +149,7 @@ public class CatalogActivity extends AppCompatActivity {
         values.put(PetContract.PetEntry.COLUMN_PET_GENDER, PetEntry.GENDER_MALE);
         values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, 24);
 
-        db.insert(PetContract.PetEntry.TABLE_NAME , null , values);
+        long newRowId = db.insert(PetEntry.TABLE_NAME , null , values);
 
 
     }
@@ -173,7 +169,6 @@ public class CatalogActivity extends AppCompatActivity {
             // Respond to a click on the "Insert dummy data" menu option
             insertPet();
             displayDatabaseInfo();
-
             return true;
         }else if( item.getItemId() == R.id.action_delete_all_entries) {
             // Respond to a click on the "Delete all entries" menu option
