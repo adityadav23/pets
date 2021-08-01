@@ -23,6 +23,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.android.pets.data.PetContract;
 import com.example.android.pets.data.PetContract.PetEntry;
+
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
@@ -140,7 +142,7 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void insertPet(){
 
-        SQLiteDatabase db  = mPetDbHelper.getWritableDatabase();
+
 
         ContentValues values = new ContentValues();
 
@@ -149,7 +151,7 @@ public class CatalogActivity extends AppCompatActivity {
         values.put(PetContract.PetEntry.COLUMN_PET_GENDER, PetEntry.GENDER_MALE);
         values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, 24);
 
-        long newRowId = db.insert(PetEntry.TABLE_NAME , null , values);
+        Uri newUri = getContentResolver().insert(PetEntry.CONTENT_URI,values);
 
 
     }

@@ -7,6 +7,8 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.widget.Toast;
+
 import com.example.android.pets.data.PetContract.PetEntry;
 
 
@@ -81,9 +83,38 @@ public class PetProvider extends ContentProvider {
 
 
     public Uri insert( Uri uri,  ContentValues values) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+
+        switch (match){
+            case PETS:
+                return InsertPet(uri, values);
+
+            default:
+                try {
+                    throw new IllegalAccessException("Insertion is not supported for "+ uri);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+
+        }
+            return null;
+
     }
 
+    private Uri InsertPet(Uri uri , ContentValues contentValues){
+        SQLiteDatabase db = mPetdbHelper.getWritableDatabase();
+        // insert new row in database table pet
+        long id = db.insert(PetEntry.TABLE_NAME, null , contentValues);
+
+        if(id==-1){
+            Toast.makeText(getContext(), "Failed to insert row for :" + uri, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        // if successful to add row
+        return ContentUris.withAppendedId(uri, id);
+    }
 
     public int delete( Uri uri,  String selection,  String[] selectionArgs) {
         return 0;
