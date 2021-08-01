@@ -1,15 +1,50 @@
 package com.example.android.pets.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import com.example.android.pets.data.PetContract.PetEntry;
 
 
 
 public class PetProvider extends ContentProvider {
 
+    /**
+     * getting object of the PetDbHelper , which return the instance of database.
+     */
     private PetDbHelper mPetdbHelper ;
+
+    /**
+     *  final constants for table pets and specific row queries
+     * @return
+     */
+     private  static final int PETS = 100;
+     private static final int PETS_ID = 101;
+
+    /**
+     *  Declaring UriMatcher
+     */
+    private static final UriMatcher sUriMatcher  = new UriMatcher(UriMatcher.NO_MATCH);
+
+    /**
+     * Declaring valid URIS
+     * @return
+     */
+
+    static{
+        // valid uri for table pets
+        sUriMatcher.addURI(PetContract.CONTENT_AUTHORITY,PetContract.PATH_PETS, PETS);
+
+        //valid uri for specific row in pets table
+        sUriMatcher.addURI(PetContract.CONTENT_AUTHORITY,PetContract.PATH_PETS + "/#", PETS_ID);
+
+    }
+
+
     public boolean onCreate() {
         mPetdbHelper = new PetDbHelper(getContext());
         return false;
@@ -18,7 +53,23 @@ public class PetProvider extends ContentProvider {
 
 
     public Cursor query( Uri uri,  String[] projection,  String selection,  String[] selectionArgs,  String sortOrder) {
-        return null;
+        //getting readable instance of database
+        SQLiteDatabase db =  mPetdbHelper.getReadableDatabase();
+        Cursor cursor = null;
+        int match = sUriMatcher.match(uri);
+
+        switch(match){
+            case PETS:
+                break;
+            case PETS_ID:  selection = PetEntry._ID + "=?";
+                           selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri)) } ;
+                           cursor = db.query(PetEntry.TABLE_NAME,projection, selection, selectionArgs,null,
+                                             null, sortOrder);
+                           break;
+        }
+        return cursor;
+
+
     }
 
 
