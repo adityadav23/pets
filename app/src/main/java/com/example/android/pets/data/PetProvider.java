@@ -101,14 +101,8 @@ public class PetProvider extends ContentProvider {
                 return InsertPet(uri, values);
 
             default:
-                try {
-                    throw new IllegalAccessException("Insertion is not supported for "+ uri);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-
+                    throw new IllegalArgumentException("Insertion is not supported for "+ uri);
         }
-            return null;
 
     }
 
@@ -156,6 +150,52 @@ public class PetProvider extends ContentProvider {
 
 
     public int update( Uri uri,  ContentValues values,  String selection,  String[] selectionArgs) {
-        return 0;
+        int match = sUriMatcher.match(uri);
+        switch(match){
+            case PETS:
+                 return updatePet(values, selection , selectionArgs);
+            case PETS_ID:
+                selection = PetEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return updatePet(values, selection , selectionArgs);
+            default:
+                throw new IllegalArgumentException("update not supported for uri: "+ uri);
+
+        }
+
+
+    }
+    private int updatePet( ContentValues contentValues,  String selection,  String[] selectionArgs){
+        //Data validation for pet name
+        String petName = contentValues.getAsString(PetEntry.COLUMN_PET_NAME);
+        if(petName.isEmpty()){
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+
+        // Data validation for breed
+        String petBreed = contentValues.getAsString(PetEntry.COLUMN_PET_BREED);
+        if(petBreed.isEmpty()){
+            throw new IllegalArgumentException("Pet requires a breed");
+        }
+        // Data validation for  valid gender
+        Integer petGender = contentValues.getAsInteger(PetEntry.COLUMN_PET_GENDER);
+        if( !PetEntry.isValidGender(petGender)){
+            throw new IllegalArgumentException("gender not specified");
+        }
+        // Data validation for weight, checking for null and positive value
+        Integer petWeight = contentValues.getAsInteger(PetEntry.COLUMN_PET_WEIGHT);
+        if(petWeight == null || petWeight < 0){
+            throw new IllegalArgumentException("enter correct weight");
+        }
+        /**
+         * If there is no value to update. then don;t update database
+         */
+
+        if(contentValues.size()==0){
+            return 0;
+        }
+        //SQLiteDatabase writable reference
+        SQLiteDatabase db = mPetdbHelper.getWritableDatabase();
+        return db.update(PetEntry.TABLE_NAME, contentValues, selection, selectionArgs);
     }
 }
