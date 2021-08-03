@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.android.pets.data.PetContract.PetEntry;
 
+import java.nio.channels.SelectableChannel;
 
 
 public class PetProvider extends ContentProvider {
@@ -61,7 +62,8 @@ public class PetProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
 
         switch(match){
-            case PETS:
+            case PETS:     cursor = db.query(PetEntry.TABLE_NAME, projection, selection, selectionArgs,null, null,
+                                            sortOrder);
                 break;
             case PETS_ID:  selection = PetEntry._ID + "=?";
                            selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri)) } ;
