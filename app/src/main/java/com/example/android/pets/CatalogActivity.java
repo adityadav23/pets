@@ -134,8 +134,6 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void insertPet(){
 
-
-
         ContentValues values = new ContentValues();
 
         values.put(PetContract.PetEntry.COLUMN_PET_NAME, "bruno");
@@ -145,6 +143,7 @@ public class CatalogActivity extends AppCompatActivity {
 
         Uri newUri = getContentResolver().insert(PetEntry.CONTENT_URI,values);
 
+        Toast.makeText(this, "the dummy data inserted at: "+ newUri,Toast.LENGTH_SHORT).show();
 
     }
 

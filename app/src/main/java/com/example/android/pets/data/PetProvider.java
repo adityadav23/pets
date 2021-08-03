@@ -55,7 +55,8 @@ public class PetProvider extends ContentProvider {
 
 
 
-    public Cursor query( Uri uri,  String[] projection,  String selection,  String[] selectionArgs,  String sortOrder) {
+    public Cursor query( Uri uri,  String[] projection,  String selection,
+                         String[] selectionArgs,  String sortOrder) {
         //getting readable instance of database
         SQLiteDatabase db =  mPetdbHelper.getReadableDatabase();
         Cursor cursor = null;
@@ -65,17 +66,24 @@ public class PetProvider extends ContentProvider {
             case PETS:     cursor = db.query(PetEntry.TABLE_NAME, projection, selection, selectionArgs,null, null,
                                             sortOrder);
                 break;
-            case PETS_ID:  selection = PetEntry._ID + "=?";
-                           selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri)) } ;
-                           cursor = db.query(PetEntry.TABLE_NAME,projection, selection, selectionArgs,null,
-                                             null, sortOrder);
-                           break;
+            case PETS_ID:  return  QueryPet(db ,cursor ,uri, projection , selection , selectionArgs , sortOrder);
+
+
         }
         return cursor;
 
 
     }
+     private Cursor QueryPet( SQLiteDatabase db, Cursor cursor,Uri uri,  String[] projection,  String selection,
+                              String[] selectionArgs,  String sortOrder){
 
+
+         selection = PetEntry._ID + "=?";
+         selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri)) } ;
+         cursor = db.query(PetEntry.TABLE_NAME,projection, selection, selectionArgs,null,
+                 null, sortOrder);
+        return cursor;
+     }
 
 
     public String getType( Uri uri) {
@@ -85,8 +93,9 @@ public class PetProvider extends ContentProvider {
 
 
     public Uri insert( Uri uri,  ContentValues values) {
+        //Matching Uri with UriMatcher
         final int match = sUriMatcher.match(uri);
-
+        // Here we  have only one case to insert data at end of table
         switch (match){
             case PETS:
                 return InsertPet(uri, values);
@@ -97,7 +106,6 @@ public class PetProvider extends ContentProvider {
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
-
 
         }
             return null;

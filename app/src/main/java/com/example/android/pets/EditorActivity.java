@@ -17,6 +17,7 @@ package com.example.android.pets;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import com.example.android.pets.data.PetContract.PetEntry;
 import androidx.core.app.NavUtils;
@@ -119,9 +120,6 @@ public class EditorActivity extends AppCompatActivity {
 
         int weightInt = Integer.parseInt(mWeightEditText.getText().toString().trim());
 
-        PetDbHelper mPetDbHelper = new PetDbHelper(this);
-
-        SQLiteDatabase db  = mPetDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
@@ -130,14 +128,16 @@ public class EditorActivity extends AppCompatActivity {
         values.put(PetContract.PetEntry.COLUMN_PET_GENDER, mGender);
         values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, weightInt);
 
-        long newRowId =  db.insert(PetEntry.TABLE_NAME , null , values);
 
-        if(newRowId == -1){
-            Toast.makeText(this, "Error with saving pet", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(this, "data saved with rowid  :" + newRowId , Toast.LENGTH_SHORT).show();
-        }
+        Uri newUri = getContentResolver().insert(PetEntry.CONTENT_URI, values);
+
+        if(newUri== null){
+            Toast.makeText(this, getString(R.string.editor_insert_pet_failed)+ newUri,Toast.LENGTH_SHORT).show();
+
+        }else
+        Toast.makeText(this, getString(R.string.editor_insert_pet_success) + newUri,Toast.LENGTH_SHORT).show();
+
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
