@@ -63,4 +63,9 @@
     <string name ="editor_insert_pet_failed"> Failed to insert to pet add at</string>
 
     <string name ="editor_insert_pet_success"> Successfully pet added at</string>
+
+    <!-- empty title for textView -->
+    <string name ="empty_title">No pets in the shelter</string>
+    <!-- empty subtitle for textView -->
+    <string name ="empty_subtitle">Add new pets</string>
 </resources>
