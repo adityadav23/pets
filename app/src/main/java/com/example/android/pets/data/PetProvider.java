@@ -70,6 +70,9 @@ public class PetProvider extends ContentProvider {
 
 
         }
+
+        //Setting notificationUri on the using cursor
+        cursor.setNotificationUri(getContext().getContentResolver() , uri);
         return cursor;
 
 
@@ -140,6 +143,8 @@ public class PetProvider extends ContentProvider {
             return null;
         }
 
+        //sending notification if any new entry is made
+        getContext().getContentResolver().notifyChange(uri,  null);
         // if successful to add row
         return ContentUris.withAppendedId(uri, id);
     }

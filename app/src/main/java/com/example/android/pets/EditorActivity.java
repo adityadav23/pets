@@ -134,9 +134,7 @@ public class EditorActivity extends AppCompatActivity {
         if(newUri== null){
             Toast.makeText(this, getString(R.string.editor_insert_pet_failed)+ newUri,Toast.LENGTH_SHORT).show();
 
-        }else
-        Toast.makeText(this, getString(R.string.editor_insert_pet_success) + newUri,Toast.LENGTH_SHORT).show();
-
+        }
 
     }
     @Override
