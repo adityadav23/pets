@@ -154,6 +154,7 @@ public class PetProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case PETS:
+
                 return db.delete(PetEntry.TABLE_NAME, selection, selectionArgs);
             case PETS_ID:
                 selection = PetEntry._ID + "=?";

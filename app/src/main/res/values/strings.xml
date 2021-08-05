@@ -68,4 +68,11 @@
     <string name ="empty_title">No pets in the shelter</string>
     <!-- empty subtitle for textView -->
     <string name ="empty_subtitle">Add new pets</string>
+
+    <!-- app bar title for inserting new pet -->
+    <string name ="editor_activity_title_insert_pet">Add Pet</string>
+    <!-- app bar title for updating new pet -->
+    <string name ="editor_activity_title_update_pet">Update Pet</string>
+
+
 </resources>

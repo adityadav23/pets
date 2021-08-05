@@ -15,7 +15,13 @@
  */
 package com.example.android.pets;
 
+import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.CursorLoader;
+import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,7 +44,7 @@ import com.example.android.pets.data.PetDbHelper;
 /**
  * Allows user to create a new pet or edit an existing one.
  */
-public class EditorActivity extends AppCompatActivity {
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     /** EditText field to enter the pet's name */
     private EditText mNameEditText;
@@ -58,6 +64,15 @@ public class EditorActivity extends AppCompatActivity {
      */
     private int mGender = PetEntry.GENDER_UNKNOWN;
 
+    /**
+     *global variable for uri received from intent
+     */
+     Uri mCurrentPetUri;
+
+    /**
+     * Editor activity loader id
+     */
+    private  static final int EXISTING_PET_LOADER = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +85,24 @@ public class EditorActivity extends AppCompatActivity {
         mWeightEditText = findViewById(R.id.edit_pet_weight);
         mGenderSpinner =  findViewById(R.id.spinner_gender);
 
+
         setupSpinner();
-     //   mPetDbHelper = new PetDbHelper(this);
+
+        //getting intent from intent passed
+        Intent intent = getIntent();
+        //Extract uri from the intent if passed
+        mCurrentPetUri = intent.getData();
+
+        if(mCurrentPetUri== null){
+            //We are adding new pet to the database
+            setTitle(R.string.editor_activity_title_insert_pet);
+        }else{
+            setTitle(R.string.editor_activity_title_update_pet);
+        }
+
+        getLoaderManager().initLoader(EXISTING_PET_LOADER , null , this);
+
+
     }
 
     /**
@@ -113,7 +144,7 @@ public class EditorActivity extends AppCompatActivity {
         });
     }
 
-    private void InsertPet(){
+    private void SavePet(){
 
         String nameString = mNameEditText.getText().toString().trim();
         String breedString = mBreedEditText.getText().toString().trim();
@@ -152,7 +183,7 @@ public class EditorActivity extends AppCompatActivity {
         if(item.getItemId() == R.id.action_save) {
             // Respond to a click on the "Save" menu option
 
-                InsertPet();
+                SavePet();
                 finish();
                 return true;}
             // Respond to a click on the "Delete" menu option
@@ -167,5 +198,73 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                PetEntry._ID ,
+                PetEntry.COLUMN_PET_NAME,
+                PetEntry.COLUMN_PET_BREED,
+                PetEntry.COLUMN_PET_GENDER,
+                PetEntry.COLUMN_PET_WEIGHT
+        };
+        return new CursorLoader(
+                this,  //Parent Activity context
+                mCurrentPetUri,   // uri of the entry we want to update
+                projection,
+                null,
+                null,
+                null
+        );
+
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+
+        // move the cursor to first entry from -1
+        if(cursor.moveToFirst()){
+
+            // Extracting data  from columns
+
+            String name = cursor.getString(cursor.getColumnIndex(PetEntry.COLUMN_PET_NAME));
+            String breed = cursor.getString(cursor.getColumnIndex(PetEntry.COLUMN_PET_BREED));
+            int weight = cursor.getInt(cursor.getColumnIndex(PetEntry.COLUMN_PET_WEIGHT));
+            int gender = cursor.getInt(cursor.getColumnIndex(PetEntry.COLUMN_PET_GENDER));
+
+            //updating views on editorActivity with these values from database
+            mNameEditText.setText(name);
+            mBreedEditText.setText(breed);
+            mWeightEditText.setText(Integer.toString(weight));
+
+            // updating gender
+            switch(gender){
+                case PetEntry.GENDER_UNKNOWN:
+                    mGenderSpinner.setSelection(0);
+                    break;
+
+
+                case PetEntry.GENDER_MALE:
+                    mGenderSpinner.setSelection(1);
+                    break;
+
+                case PetEntry.GENDER_FEMALE:
+                    mGenderSpinner.setSelection(2);
+                    break;
+
+                default:
+                    mGenderSpinner.setSelection(0);
+                    break;
+            }
+
+
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
