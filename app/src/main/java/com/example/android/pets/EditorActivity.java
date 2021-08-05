@@ -125,6 +125,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         if(mCurrentPetUri== null){
             //We are adding new pet to the database
             setTitle(getString(R.string.editor_activity_title_insert_pet));
+
+            invalidateOptionsMenu();
         }else {
             // updating existing pet
             setTitle(getString(R.string.editor_activity_title_update_pet));
@@ -224,6 +226,18 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
 
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // If this is a new pet, hide the "Delete" menu item.
+        if (mCurrentPetUri == null) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
+        return true;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_editor.xml file.
