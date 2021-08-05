@@ -67,7 +67,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     /**
      *global variable for uri received from intent
      */
-     Uri mCurrentPetUri;
+     private Uri mCurrentPetUri;
 
     /**
      * Editor activity loader id
@@ -79,29 +79,31 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
+        //getting intent from intent passed
+        Intent intent = getIntent();
+        //Extract uri from the intent if passed
+        mCurrentPetUri = intent.getData();
+
         // Find all relevant views that we will need to read user input from
         mNameEditText =  findViewById(R.id.edit_pet_name);
         mBreedEditText =  findViewById(R.id.edit_pet_breed);
         mWeightEditText = findViewById(R.id.edit_pet_weight);
         mGenderSpinner =  findViewById(R.id.spinner_gender);
 
-
         setupSpinner();
 
-        //getting intent from intent passed
-        Intent intent = getIntent();
-        //Extract uri from the intent if passed
-        mCurrentPetUri = intent.getData();
+
 
         if(mCurrentPetUri== null){
             //We are adding new pet to the database
-            setTitle(R.string.editor_activity_title_insert_pet);
-        }else{
-            setTitle(R.string.editor_activity_title_update_pet);
+            setTitle(getString(R.string.editor_activity_title_insert_pet));
+        }else {
+            // updating existing pet
+            setTitle(getString(R.string.editor_activity_title_update_pet));
+
+
+            getLoaderManager().initLoader(EXISTING_PET_LOADER, null, this);
         }
-
-        getLoaderManager().initLoader(EXISTING_PET_LOADER , null , this);
-
 
     }
 
@@ -146,11 +148,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private void SavePet(){
 
+
         String nameString = mNameEditText.getText().toString().trim();
         String breedString = mBreedEditText.getText().toString().trim();
-
         int weightInt = Integer.parseInt(mWeightEditText.getText().toString().trim());
-
 
         ContentValues values = new ContentValues();
 
@@ -159,13 +160,28 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         values.put(PetContract.PetEntry.COLUMN_PET_GENDER, mGender);
         values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, weightInt);
 
+        //checking if it is to insert or update
+        if(mCurrentPetUri== null) {
 
-        Uri newUri = getContentResolver().insert(PetEntry.CONTENT_URI, values);
+            Uri newUri = getContentResolver().insert(PetEntry.CONTENT_URI, values);
 
-        if(newUri== null){
-            Toast.makeText(this, getString(R.string.editor_insert_pet_failed)+ newUri,Toast.LENGTH_SHORT).show();
+            if (newUri == null) {
+                Toast.makeText(this, getString(R.string.editor_insert_pet_failed) + newUri, Toast.LENGTH_SHORT).show();
 
+            }
+        }else{
+            // how to retrieve values????
+            int rowAffected = getContentResolver().update(mCurrentPetUri , values , null , null);
+
+            // check if updated and show toast message
+            if(rowAffected == 0){
+                Toast.makeText(this, getString(R.string.editor_update_failed), Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(this, getString(R.string.editor_update_success), Toast.LENGTH_SHORT).show();
+
+            }
         }
+
 
     }
     @Override
@@ -224,6 +240,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
+        if(cursor == null || cursor.getCount()<1){
+            return;
+        }
         // move the cursor to first entry from -1
         if(cursor.moveToFirst()){
 
@@ -237,7 +256,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             //updating views on editorActivity with these values from database
             mNameEditText.setText(name);
             mBreedEditText.setText(breed);
-            mWeightEditText.setText(Integer.toString(weight));
+            mWeightEditText.setText(String.valueOf(weight));
 
             // updating gender
             switch(gender){
@@ -265,6 +284,12 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+
+        mNameEditText.setText("");
+        mBreedEditText.setText("");
+        mWeightEditText.setText("");
+        mGenderSpinner.setSelection(0);
+
 
     }
 }

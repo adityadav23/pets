@@ -74,5 +74,10 @@
     <!-- app bar title for updating new pet -->
     <string name ="editor_activity_title_update_pet">Update Pet</string>
 
+    <!-- update an existing pet failed -->
+    <string name = "editor_update_failed">Failed to update pet</string>
+
+    <!-- update an existing pet success -->
+    <string name = "editor_update_success">Pet updated</string>
 
 </resources>

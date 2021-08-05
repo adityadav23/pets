@@ -172,11 +172,11 @@ public class PetProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch(match){
             case PETS:
-                 return updatePet(values, selection , selectionArgs);
+                 return updatePet(uri,values, selection , selectionArgs);
             case PETS_ID:
                 selection = PetEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return updatePet(values, selection , selectionArgs);
+                return updatePet(uri,values, selection , selectionArgs);
             default:
                 throw new IllegalArgumentException("update not supported for uri: "+ uri);
 
@@ -184,7 +184,7 @@ public class PetProvider extends ContentProvider {
 
 
     }
-    private int updatePet( ContentValues contentValues,  String selection,  String[] selectionArgs){
+    private int updatePet( Uri uri,ContentValues contentValues,  String selection,  String[] selectionArgs){
         //Data validation for pet name
         String petName = contentValues.getAsString(PetEntry.COLUMN_PET_NAME);
         if(petName.isEmpty()){
@@ -207,7 +207,7 @@ public class PetProvider extends ContentProvider {
             throw new IllegalArgumentException("enter correct weight");
         }
         /**
-         * If there is no value to update. then don;t update database
+         * If there is no value to update. then don't update database
          */
 
         if(contentValues.size()==0){
@@ -215,6 +215,10 @@ public class PetProvider extends ContentProvider {
         }
         //SQLiteDatabase writable reference
         SQLiteDatabase db = mPetdbHelper.getWritableDatabase();
+
+        //sending notification if any new entry is made
+        getContext().getContentResolver().notifyChange(uri,  null);
+
         return db.update(PetEntry.TABLE_NAME, contentValues, selection, selectionArgs);
     }
 }
