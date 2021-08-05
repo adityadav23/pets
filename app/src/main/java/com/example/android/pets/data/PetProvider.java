@@ -117,11 +117,7 @@ public class PetProvider extends ContentProvider {
              throw new IllegalArgumentException("Pet requires a name");
         }
 
-        // Data validation for breed
-        String petBreed = contentValues.getAsString(PetEntry.COLUMN_PET_BREED);
-        if(petBreed.isEmpty()){
-            throw new IllegalArgumentException("Pet requires a breed");
-        }
+
         // Data validation for  valid gender
         Integer petGender = contentValues.getAsInteger(PetEntry.COLUMN_PET_GENDER);
         if( !PetEntry.isValidGender(petGender)){
@@ -196,11 +192,7 @@ public class PetProvider extends ContentProvider {
             throw new IllegalArgumentException("Pet requires a name");
         }
 
-        // Data validation for breed
-        String petBreed = contentValues.getAsString(PetEntry.COLUMN_PET_BREED);
-        if(petBreed.isEmpty()){
-            throw new IllegalArgumentException("Pet requires a breed");
-        }
+
         // Data validation for  valid gender
         Integer petGender = contentValues.getAsInteger(PetEntry.COLUMN_PET_GENDER);
         if( !PetEntry.isValidGender(petGender)){

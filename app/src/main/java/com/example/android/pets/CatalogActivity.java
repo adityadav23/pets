@@ -31,6 +31,8 @@ import com.example.android.pets.data.PetContract.PetEntry;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -96,7 +98,13 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     }
 
-
+    /**
+     * Helper method to delete all pets in the database.
+     */
+    private void deleteAllPets() {
+        int rowsDeleted = getContentResolver().delete(PetEntry.CONTENT_URI, null, null);
+        Log.v("CatalogActivity", rowsDeleted + " rows deleted from pet database");
+    }
 
 
     private void insertPet(){
@@ -130,7 +138,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             return true;
         }else if( item.getItemId() == R.id.action_delete_all_entries) {
             // Respond to a click on the "Delete all entries" menu option
-            // Do nothing for now
+            deleteAllPets();
             return true;
         }
 
