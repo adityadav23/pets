@@ -151,14 +151,26 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         String nameString = mNameEditText.getText().toString().trim();
         String breedString = mBreedEditText.getText().toString().trim();
-        int weightInt = Integer.parseInt(mWeightEditText.getText().toString().trim());
+        String weightString = mWeightEditText.getText().toString().trim();
+
+        //prevent crash with blank editor and gender unknown
+        if(mCurrentPetUri == null && TextUtils.isEmpty(nameString) && TextUtils.isEmpty(breedString)){
+            return ;
+        }
+
+        // to set weight default 0
+        int weight = 0;
+        if(!TextUtils.isEmpty(weightString)) {
+            weight = Integer.parseInt(weightString);
+        }
 
         ContentValues values = new ContentValues();
 
         values.put(PetContract.PetEntry.COLUMN_PET_NAME, nameString);
         values.put(PetContract.PetEntry.COLUMN_PET_BREED, breedString);
         values.put(PetContract.PetEntry.COLUMN_PET_GENDER, mGender);
-        values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, weightInt);
+
+        values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, weight);
 
         //checking if it is to insert or update
         if(mCurrentPetUri== null) {

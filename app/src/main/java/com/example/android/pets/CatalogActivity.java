@@ -110,7 +110,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
         Uri newUri = getContentResolver().insert(PetEntry.CONTENT_URI,values);
 
-        Toast.makeText(this, "the dummy data inserted at: "+ newUri,Toast.LENGTH_SHORT).show();
 
     }
 
