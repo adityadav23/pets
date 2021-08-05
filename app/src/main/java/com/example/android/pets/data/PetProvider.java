@@ -111,11 +111,11 @@ public class PetProvider extends ContentProvider {
 
     private Uri InsertPet(Uri uri , ContentValues contentValues){
 
-        //Data validation for pet name
-        String petName = contentValues.getAsString(PetEntry.COLUMN_PET_NAME);
-        if(petName.isEmpty()){
-             throw new IllegalArgumentException("Pet requires a name");
-        }
+//        //Data validation for pet name
+//        String petName = contentValues.getAsString(PetEntry.COLUMN_PET_NAME);
+//        if(petName.isEmpty()){
+//             throw new IllegalArgumentException("Pet requires a name");
+//        }
 
 
         // Data validation for  valid gender
@@ -186,11 +186,11 @@ public class PetProvider extends ContentProvider {
 
     }
     private int updatePet( Uri uri,ContentValues contentValues,  String selection,  String[] selectionArgs){
-        //Data validation for pet name
-        String petName = contentValues.getAsString(PetEntry.COLUMN_PET_NAME);
-        if(petName.isEmpty()){
-            throw new IllegalArgumentException("Pet requires a name");
-        }
+//        //Data validation for pet name
+//        String petName = contentValues.getAsString(PetEntry.COLUMN_PET_NAME);
+//        if(petName.isEmpty()){
+//            throw new IllegalArgumentException("Pet requires a name");
+//        }
 
 
         // Data validation for  valid gender

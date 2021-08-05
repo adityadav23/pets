@@ -107,6 +107,8 @@
     <!-- Label for the pet's breed if the breed is unknown [CHAR LIMIT=20] -->
     <string name="unknown_breed">Unknown breed</string>
 
+    <!-- Label for the pet's breed if the breed is unknown [CHAR LIMIT=20] -->
+    <string name="unknown_name">Unknown name</string>
 
 
 

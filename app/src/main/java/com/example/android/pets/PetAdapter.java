@@ -36,6 +36,11 @@ public class PetAdapter extends CursorAdapter{
 
         // If the pet breed is empty string or null, then use some default text
         // that says "Unknown breed", so the TextView isn't blank.
+        if (TextUtils.isEmpty(petName)) {
+            petName = context.getString(R.string.unknown_name);
+        }
+        // If the pet breed is empty string or null, then use some default text
+        // that says "Unknown breed", so the TextView isn't blank.
         if (TextUtils.isEmpty(petBreed)) {
             petBreed = context.getString(R.string.unknown_breed);
         }
